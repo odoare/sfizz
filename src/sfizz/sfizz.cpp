@@ -210,6 +210,16 @@ void sfz::Sfizz::pitchWheel(int delay, int pitch) noexcept
     synth->synth.pitchWheel(delay, pitch);
 }
 
+void sfz::Sfizz::noteOn(int delay, int noteNumber, int velocity, int channel) noexcept
+{
+    synth->synth.noteOn(delay, noteNumber, velocity, channel);
+}
+
+void sfz::Sfizz::channelPitch(int delay, int channel, float semitones) noexcept
+{
+    synth->synth.channelPitch(delay, channel, semitones);
+}
+
 void sfz::Sfizz::hdPitchWheel(int delay, float pitch) noexcept
 {
     synth->synth.hdPitchWheel(delay, pitch);

@@ -1993,6 +1993,18 @@ void Voice::Impl::pitchEnvelope(absl::Span<float> pitchSpan) noexcept
         linearEnvelope(events, pitchSpan, bendLambda);
     bendSmoother_.process(pitchSpan, pitchSpan);
 
+    // MPE: the pitch of the channel the note came on, in semitones, outside of the region's bend.
+    if (triggerEvent_.type == TriggerEventType::NoteOn) {
+        const EventVector& channelEvents = midiState.getChannelPitchEvents(triggerEvent_.channel);
+        if (channelEvents.size() > 1 || channelEvents.front().value != 0.0f) {
+            auto channelSpan = resources_.getBufferPool().getBuffer(numFrames);
+            if (channelSpan) {
+                linearEnvelope(channelEvents, *channelSpan, [](float semitones) { return 100.0f * semitones; });
+                add<float>(*channelSpan, pitchSpan);
+            }
+        }
+    }
+
     ModMatrix& mm = resources_.getModMatrix();
 
     if (float* mod = mm.getModulation(pitchTarget_))

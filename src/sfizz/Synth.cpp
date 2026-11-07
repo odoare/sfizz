@@ -1346,6 +1346,25 @@ void Synth::Impl::noteOffDispatch(int delay, int noteNumber, float velocity) noe
     }
 }
 
+void Synth::noteOn(int delay, int noteNumber, int velocity, int channel) noexcept
+{
+    hdNoteOn(delay, noteNumber, normalizeVelocity(velocity), channel);
+}
+
+void Synth::hdNoteOn(int delay, int noteNumber, float normalizedVelocity, int channel) noexcept
+{
+    Impl& impl = *impl_;
+    impl.noteChannel_ = channel;
+    hdNoteOn(delay, noteNumber, normalizedVelocity);
+    impl.noteChannel_ = 0;
+}
+
+void Synth::channelPitch(int delay, int channel, float semitones) noexcept
+{
+    Impl& impl = *impl_;
+    impl.resources_.getMidiState().channelPitchEvent(delay, channel, semitones);
+}
+
 void Synth::Impl::noteOnDispatch(int delay, int noteNumber, float velocity) noexcept
 {
     const auto randValue = randNoteDistribution_(Random::randomGenerator);
@@ -1376,7 +1395,7 @@ void Synth::Impl::noteOnDispatch(int delay, int noteNumber, float velocity) noex
                 continue;
 
             checkOffGroups(&region, delay, noteNumber);
-            TriggerEvent triggerEvent { TriggerEventType::NoteOn, noteNumber, velocity };
+            TriggerEvent triggerEvent { TriggerEventType::NoteOn, noteNumber, velocity, noteChannel_ };
             startVoice(layer, delay, triggerEvent, ring);
         }
     }

@@ -19,6 +19,7 @@ struct TriggerEvent
     TriggerEventType type;
     int number;
     float value;
+    int channel { 0 }; ///< the MIDI channel of a note, for its per-channel pitch (MPE)
 };
 
 }

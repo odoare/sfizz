@@ -372,6 +372,29 @@ public:
      * @param velocity the normalized midi note velocity, in domain 0 to 1
      */
     void hdNoteOn(int delay, int noteNumber, float velocity) noexcept;
+
+    /**
+     * @brief Send a note on event on a MIDI channel (MPE): the voices it starts
+     *        follow that channel's pitch (channelPitch()).
+     *
+     * @param delay
+     * @param noteNumber
+     * @param velocity
+     * @param channel 0 to 15
+     */
+    void noteOn(int delay, int noteNumber, int velocity, int channel) noexcept;
+    void hdNoteOn(int delay, int noteNumber, float velocity, int channel) noexcept;
+
+    /**
+     * @brief The pitch of a MIDI channel, in semitones (MPE). It adds to the
+     *        pitch of the voices started on that channel, outside of the
+     *        regions' bend settings: the sender decides the range.
+     *
+     * @param delay
+     * @param channel 0 to 15
+     * @param semitones
+     */
+    void channelPitch(int delay, int channel, float semitones) noexcept;
     /**
      * @brief Send a note off event to the synth
      *

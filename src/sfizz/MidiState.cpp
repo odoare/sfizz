@@ -101,6 +101,8 @@ void sfz::MidiState::flushEvents() noexcept
         flushEventVector(events);
 
     flushEventVector(pitchEvents);
+    for (auto& events : channelPitchEvents)
+        flushEventVector(events);
     flushEventVector(channelAftertouchEvents);
 }
 
@@ -119,6 +121,8 @@ void sfz::MidiState::setSamplesPerBlock(int samplesPerBlock) noexcept
         updateEventBufferSize(events);
 
     updateEventBufferSize(pitchEvents);
+    for (auto& events : channelPitchEvents)
+        updateEventBufferSize(events);
     updateEventBufferSize(channelAftertouchEvents);
 }
 
@@ -162,6 +166,13 @@ void sfz::MidiState::pitchBendEvent(int delay, float pitchBendValue) noexcept
 {
     ASSERT(pitchBendValue >= -1.0f && pitchBendValue <= 1.0f);
     insertEventInVector(pitchEvents, delay, pitchBendValue);
+}
+
+void sfz::MidiState::channelPitchEvent(int delay, int channel, float semitones) noexcept
+{
+    if (channel < 0 || channel >= static_cast<int>(channelPitchEvents.size()))
+        return;
+    insertEventInVector(channelPitchEvents[channel], delay, semitones);
 }
 
 float sfz::MidiState::getPitchBend() const noexcept
@@ -264,6 +275,8 @@ void sfz::MidiState::resetEventStates() noexcept
         clearEvents(events);
 
     clearEvents(pitchEvents);
+    for (auto& events : channelPitchEvents)
+        clearEvents(events);
     clearEvents(channelAftertouchEvents);
 }
 
@@ -278,6 +291,13 @@ const sfz::EventVector& sfz::MidiState::getCCEvents(int ccIdx) const noexcept
 const sfz::EventVector& sfz::MidiState::getPitchEvents() const noexcept
 {
     return pitchEvents;
+}
+
+const sfz::EventVector& sfz::MidiState::getChannelPitchEvents(int channel) const noexcept
+{
+    if (channel < 0 || channel >= static_cast<int>(channelPitchEvents.size()))
+        return nullEvent;
+    return channelPitchEvents[channel];
 }
 
 const sfz::EventVector& sfz::MidiState::getChannelAftertouchEvents() const noexcept

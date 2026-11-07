@@ -100,6 +100,18 @@ public:
     void pitchBendEvent(int delay, float pitchBendValue) noexcept;
 
     /**
+     * @brief Register the pitch of a MIDI channel, in semitones (MPE: each
+     *        note on a channel of its own, with its own pitch). It adds to the
+     *        pitch of the voices started on that channel, outside of the
+     *        regions' bend settings.
+     *
+     * @param delay
+     * @param channel 0 to 15
+     * @param semitones
+     */
+    void channelPitchEvent(int delay, int channel, float semitones) noexcept;
+
+    /**
      * @brief Get the pitch bend status
 
      * @return int
@@ -212,6 +224,11 @@ public:
     const EventVector& getCCEvents(int ccIdx) const noexcept;
     const EventVector& getPolyAftertouchEvents(int noteNumber) const noexcept;
     const EventVector& getPitchEvents() const noexcept;
+
+    /**
+     * @brief Get the pitch events of a MIDI channel, in semitones
+     */
+    const EventVector& getChannelPitchEvents(int channel) const noexcept;
     const EventVector& getChannelAftertouchEvents() const noexcept;
     /**
      * @brief Reset the midi event states (CC, AT, and pitch bend)
@@ -284,6 +301,11 @@ private:
      * @brief Pitch bend status
      */
     EventVector pitchEvents;
+
+    /**
+     * @brief Pitch of each MIDI channel, in semitones (MPE)
+     */
+    std::array<EventVector, 16> channelPitchEvents;
 
     /**
      * @brief Aftertouch status

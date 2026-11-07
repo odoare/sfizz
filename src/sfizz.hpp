@@ -426,6 +426,36 @@ public:
     void hdNoteOn(int delay, int noteNumber, float velocity) noexcept;
 
     /**
+     * @brief Send a note on event on a MIDI channel (MPE): the voices it starts
+     *        follow that channel's pitch, set by channelPitch().
+     * @since odoare/sfizz (fork)
+     *
+     * @param delay the delay at which the event occurs.
+     * @param noteNumber the midi note number, in domain 0 to 127.
+     * @param velocity the midi note velocity, in domain 0 to 127.
+     * @param channel the MIDI channel, 0 to 15.
+     *
+     * @par Thread-safety constraints
+     * - @b RT: the function must be invoked from the Real-time thread
+     */
+    void noteOn(int delay, int noteNumber, int velocity, int channel) noexcept;
+
+    /**
+     * @brief The pitch of a MIDI channel, in semitones (MPE). It adds to the
+     *        pitch of the voices started on that channel, outside of the
+     *        regions' bend settings: the sender decides the range (MPE: 48).
+     * @since odoare/sfizz (fork)
+     *
+     * @param delay the delay at which the event occurs.
+     * @param channel the MIDI channel, 0 to 15.
+     * @param semitones the channel's pitch offset.
+     *
+     * @par Thread-safety constraints
+     * - @b RT: the function must be invoked from the Real-time thread
+     */
+    void channelPitch(int delay, int channel, float semitones) noexcept;
+
+    /**
      * @brief Send a note off event to the synth.
      * @since 0.2.0
      *
